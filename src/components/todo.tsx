@@ -1,3 +1,5 @@
+import useTodos from "../hooks/useTodos";
+
 export interface ITodo {
   title: string;
   id: string;
@@ -8,7 +10,6 @@ export interface ITodo {
 
 interface ITodoComp extends ITodo {
   setTodos : React.Dispatch<React.SetStateAction<ITodo[] | null>>;
-  todos : ITodo[] | null;
   handleUpdateTodo : () => void;
 }
 
@@ -16,26 +17,14 @@ export const Todo: React.FC<ITodoComp> = ({
   title,
   id,
   desc,
-  isCompleted,
-  isUpdated,
-  setTodos,
-  todos,
   handleUpdateTodo
 }) => {
-  const handleDelete = (id: string) => {
-    if (!todos) {
-      return;
-    }
-    const filteredTodos = todos.filter((todo) => {
-      return todo.id !== id;
-    });
-    setTodos(filteredTodos);
-  };
+  const {deleteTodo} = useTodos();
   return (
     <li key={id}>
       <h3>{title}</h3>
       <p>{desc}</p>
-      <button type="button" onClick={() => handleDelete(id)}>
+      <button type="button" onClick={() => deleteTodo(id)}>
         delete
       </button>
       <button type="button" onClick={handleUpdateTodo}>update</button>

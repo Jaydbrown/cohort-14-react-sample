@@ -4,59 +4,28 @@ import viteLogo from "./assets/vite.svg";
 import heroImg from "./assets/hero.png";
 import "./App.css";
 import { Todo, type ITodo } from "./components/todo";
+import useTodos from "./hooks/useTodos";
 
 // hooks => useState, useCallBack, useMemo, useContext, useEffect , useRef
 // addTodo, deleteTodo, updateTodo, markTodoAsComplete, searchTodo
 // custom hooks
 
 function App() {
-  const [todos, setTodos] = useState<ITodo[] | null>(null);
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [updateTodoId, setUpdateTodoId] = useState("");
+  const {
+    title,
+    desc,
+    setTitle,
+    setDesc,
+    todos,
+    setTodos,
+    isUpdating,
+    createTodo,
+    updateTodo
+  } = useTodos();
 
-  const createTodo = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleTodoCreation = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!title || !desc) {
-      return;
-    }
-    if (isUpdating) {
-      if (updateTodoId == "") return;
-      if (!todos) return;
-      // const todo = todos.find((ele) => ele.id == updateTodoId );
-      const updatedTodos = todos.map((ele) => {
-        if (ele.id === updateTodoId) {
-          ele.title = title;
-          ele.desc = desc;
-          ele.isUpdated = true;
-        }
-        return ele;
-      });
-      setTodos(updatedTodos);
-      setIsUpdating(false);
-      setUpdateTodoId("");
-      resetFormValues();
-      return;
-    }
-
-    const formBody: ITodo = {
-      title: title.trim(),
-      desc: desc.trim(),
-      isCompleted: false,
-      isUpdated: false,
-      id: `${todos?.length}${title}`,
-    };
-    resetFormValues();
-    if (!todos) {
-      setTodos([formBody]);
-      return;
-    }
-    setTodos([...todos, formBody]);
-  };
-  const resetFormValues = () => {
-    setTitle("");
-    setDesc("");
+    createTodo()
   };
 
   // const handleDelete =(id : string)=> {
@@ -69,22 +38,11 @@ function App() {
   //   setTodos(filteredTodos);
   // }
 
-  const handleUpdateTodo = (id: string) => {
-    if (!todos) return;
-    const todo = todos.find((ele) => ele.id == id);
-    if (!todo) return;
-    if (todo.isCompleted) return;
-    setTitle(todo.title);
-    setDesc(todo.desc);
-    setIsUpdating(true);
-    setUpdateTodoId(id);
-  };
-
   return (
     <>
       <h1>Todos</h1>
 
-      <form onSubmit={createTodo}>
+      <form onSubmit={handleTodoCreation}>
         <input
           type="text"
           placeholder="title"
@@ -92,7 +50,6 @@ function App() {
             setTitle(e.target.value)
           }
           value={title}
-          
         />
         <input
           type="text"
@@ -101,7 +58,6 @@ function App() {
             setDesc(e.target.value)
           }
           value={desc}
-          
         />
 
         <button type="submit">
@@ -121,8 +77,7 @@ function App() {
               // isUpdated={todo.isUpdated}
               {...todo}
               setTodos={setTodos}
-              todos={todos}
-              handleUpdateTodo={() => handleUpdateTodo(todo.id)}
+              handleUpdateTodo={() => updateTodo(todo.id)}
             />
           ))}
       </ul>
