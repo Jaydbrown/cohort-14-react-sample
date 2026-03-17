@@ -43,9 +43,9 @@ const useTodos = () => {
       return;
     }
     setTodos([...todos, formBody]);
-  }, []);
+  }, [title, desc]);
 
-  const updateTodo = useCallback((id: string) => {
+  const updateTodo = (id: string) => {
     if (!todos) return;
     const todo = todos.find((ele) => ele.id == id);
     if (!todo) return;
@@ -54,9 +54,9 @@ const useTodos = () => {
     setDesc(todo.desc);
     setIsUpdating(true);
     setUpdateTodoId(id);
-  }, []);
+  };
 
-  const deleteTodo = useCallback((id: string) => {
+  const deleteTodo = (id: string) => {
     if (!todos) {
       return;
     }
@@ -64,7 +64,7 @@ const useTodos = () => {
       return todo.id !== id;
     });
     setTodos(filteredTodos);
-  }, []);
+  };
 
   const resetFormValues = () => {
     setTitle("");
